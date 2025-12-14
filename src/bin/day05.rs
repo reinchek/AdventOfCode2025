@@ -68,14 +68,12 @@ fn main() {
     // 3. If it's true, and if the inner_loop_range_item.end is biggest then curr_range.end, set curr_range.end = inner_loop_range_item.end
     // 4. Now count all end-start and get the total sum.
     fresh_ids_flatten.sort_by(|r_curr, r_next| r_curr.start().cmp(r_next.start()));
-    println!("Fresh IDs: {:#?}", fresh_ids_flatten);
     let mut merged_ranges = recursive_merging(&mut fresh_ids_flatten);
     let mut merged_ranges = merged_ranges.iter().collect::<HashSet<_>>();
 
     println!("Merged IDs: {:#?}", merged_ranges);
     let total = merged_ranges.iter().map(|range| range.end()+1-range.start()).sum::<usize>();
-    // let total = total + merged_ranges.len();
-    
+
     println!("#Part 2) How many ingredient IDs are considered to be fresh according to the fresh ingredient ID ranges? {}", total);
 }
  
@@ -98,9 +96,7 @@ fn recursive_merging(fresh_ids_ranges: &mut Vec<RangeInclusive<usize>>) -> Vec<R
         for (inner_idx, range_inner) in clone.iter().enumerate() {
             if can_be_merged(range_item, range_inner) {
                 fresh_ids_ranges[item_idx] = merge_ranges(range_item, range_inner);
-                // merged_ranges.push(merge_ranges(range_item, range_inner));
                 fresh_ids_ranges.remove(inner_idx);
-                // fresh_ids_ranges.remove(inner_idx-item_idx);
                 return recursive_merging(fresh_ids_ranges);
             } else {
                 // If true, simply remove range_inner, because it's full contained by range_item
