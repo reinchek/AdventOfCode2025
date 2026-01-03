@@ -1,14 +1,19 @@
 // https://adventofcode.com/2025/day/6
 // Solve the problems on the math worksheet. What is the grand total found by adding together all of the answers to the individual problems?
 
+use std::arch::x86_64::_mulx_u32;
+use std::fs::read_to_string;
 use aoc2025::read_input;
 
 fn main() {
-    let input = read_input(6);
-    let input = "123 328  51 64
-45 64  387 23
-6 98  215 314
-*   +   *   +";
+    //let input = read_input(6);
+    let input =
+"
+123 328  51 64
+ 45 64  387 23
+  6 98  215 314
+*   +   *   +
+";
 
     // ██████╗  █████╗ ██████╗ ████████╗     ██╗
     // ██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝    ███║
@@ -109,29 +114,63 @@ fn main() {
     let signs_splitted = last_signs_row.split_inclusive(['*', '+']);
     let signs_splitted_array: Vec<&str> = signs_splitted.clone().collect();
     let input_lines = input
+        .trim()
         .lines()
         .collect::<Vec<&str>>().as_slice()[..input.lines().count() - 1]
         .to_vec();
 
     let mut grand_total = 0;
 
+    let mut greatest_number_len: usize = 0;
     for (sign_index, sign_str) in signs_splitted.enumerate() {
-        let greatest_number_len: usize;
-
         if sign_index == 0 {
-            greatest_number_len = signs_splitted_array[sign_index+1].len()-1;
+            greatest_number_len = signs_splitted_array[sign_index + 1].len() - 1;
         } else {
-            greatest_number_len = sign_str.len()-1;
+            greatest_number_len = sign_str.len() - 1;
         }
+    }
 
+    // |1|2|3| |3|2|8|5|1| |6|4| | <-- len(): 11
+    // |4|5| | |6|4| |3|8|7|2|3| |
+    // |6| | | |9|8| |2|1|5|3|1|4|
+    // |*| | | |+| | |*| | |+| | |
+    let mut curr_pos = 0;
+    let mut col_numbers: Vec<i128> = Vec::new();
 
-        for row in 0..input_lines.iter().count() {
-            for col in &input_lines[0..greatest_number_len] {
-                dbg!(col);
+    while curr_pos < input_lines[0].len()-1 {
+
+        let mut temporary_number: Vec<i128> = Vec::new();
+    
+        dbg!(curr_pos);
+        for i in curr_pos..(curr_pos+greatest_number_len) {
+            let mut local_number: String = String::new();
+
+            for row in &input_lines {
+                let row = row.chars().collect::<Vec<char>>();
+                if row[i] != ' ' {
+
+                    local_number.push(row[i]);
+                }
+            }
+            if !local_number.is_empty() {
+                temporary_number.push(local_number.parse::<i128>().unwrap());
             }
         }
 
+        println!("curr_pos: {curr_pos}");
+        println!("col_numbers: {temporary_number:?}");
+        if last_signs_row.chars().nth(curr_pos).unwrap() == '*' {
+            println!("mul;");
+            grand_total += temporary_number.iter().product::<i128>();
+        } else {
+            println!("add;");
+
+            grand_total += temporary_number.iter().sum::<i128>();
+        }
+
+        curr_pos += greatest_number_len+1;
     }
+    dbg!(grand_total);
     //
     //
     // // 123 328  51   64
