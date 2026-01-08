@@ -9,7 +9,7 @@ use aoc2025::{clrscr, read_input};
 fn main() {
     clrscr(Some(3));
 
-    let input = read_input(3);
+    let input = read_input(3, None);
 
     let mut banks_max_joltages: Vec<usize> = Vec::new();
 

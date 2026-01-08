@@ -12,7 +12,7 @@ const START_FROM: u8 = 50;
 fn main () {
     clrscr(Some(1));
 
-    let input = read_input(1);
+    let input = read_input(1, None);
     let mut list = CircularLinkedList::new(LIST_LENGTH);
     let mut number = 0;
     let mut zero_count = 0;

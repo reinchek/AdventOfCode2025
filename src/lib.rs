@@ -1,4 +1,5 @@
 use std::cell::RefCell;
+use std::fmt::format;
 use std::rc::{Rc, Weak};
 
 // Clear screen.
@@ -14,19 +15,29 @@ pub fn clrscr(day: Option<u8>) {
             println!("██████╔╝██║  ██║   ██║");
             print!("╚═════╝ ╚═╝  ╚═╝   ╚═╝");
             println!(" 🗓️ {day_number}");
-        },
-        None => ()
+        }
+        None => (),
     };
 }
 
-pub fn read_input(day: u32) -> String {
-    std::fs::read_to_string(format!("inputs/day{:02}.txt", day))
-        .expect("Input file not found")
+pub fn read_input(day: u32, test: Option<bool>) -> String {
+    let mut filename = String::new();
+    if let Some(is_test) = test {
+        if is_test {
+            filename = format!("inputs/day{:02}_test.txt", day);
+        } else {
+            filename = format!("inputs/day{:02}.txt", day);
+        }
+    } else {
+        filename = format!("inputs/day{:02}.txt", day);
+    }
+    dbg!(&filename);
+    std::fs::read_to_string(filename).expect("Input file not found")
 }
 
 pub enum Direction {
     Left,
-    Right
+    Right,
 }
 
 impl Direction {
@@ -47,7 +58,7 @@ pub struct Node {
 }
 #[derive(Debug, Clone)]
 pub struct CircularLinkedList {
-    head: Rc<RefCell<Node>>
+    head: Rc<RefCell<Node>>,
 }
 
 impl CircularLinkedList {

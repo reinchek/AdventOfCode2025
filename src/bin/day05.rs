@@ -9,7 +9,7 @@ use aoc2025::{clrscr, read_input};
 
 fn main() {
     clrscr(Some(5));
-    let input = read_input(5);
+    let input = read_input(5, None);
 
     // ██████╗  █████╗ ██████╗ ████████╗     ██╗
     // ██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝    ███║

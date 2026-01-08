@@ -9,7 +9,7 @@ const OFFSET: usize = 4;
 fn main() {
     clrscr(Some(4));
 
-    let input = read_input(4);
+    let input = read_input(4, None);
 
     // ██████╗  █████╗ ██████╗ ████████╗     ██╗
     // ██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝    ███║
