@@ -12,8 +12,18 @@ fn main() {
     clrscr(Some(2));
 
     let input = read_input(2, None).trim().to_string();
-    // let input = String::from("11-22,95-115,998-1012,1188511880-1188511890,222220-222224,1698522-1698528,446443-446449,38593856-38593862,565653-565659,824824821-824824827,2121212118-2121212124");
 
+    println!("#Part 1) Collected numbers sum: {}", part_1(&input).0);
+    println!("#Part 2) Collected numbers sum: {}", part_2(&input));
+}
+
+// ██████╗  █████╗ ██████╗ ████████╗     ██╗
+// ██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝    ███║
+// ██████╔╝███████║██████╔╝   ██║       ╚██║
+// ██╔═══╝ ██╔══██║██╔══██╗   ██║        ██║
+// ██║     ██║  ██║██║  ██║   ██║        ██║
+// ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝        ╚═╝
+fn part_1(input: &String) -> (usize, usize) {
     let mut part1_collected_numbers: Vec<usize> = Vec::new();
     let mut part2_collected_numbers: Vec<usize> = Vec::new();
 
@@ -32,12 +42,7 @@ fn main() {
             let str_number = number.to_string();
             let str_len = str_number.len();
 
-            // ██████╗  █████╗ ██████╗ ████████╗     ██╗
-            // ██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝    ███║
-            // ██████╔╝███████║██████╔╝   ██║       ╚██║
-            // ██╔═══╝ ██╔══██║██╔══██╗   ██║        ██║
-            // ██║     ██║  ██║██║  ██║   ██║        ██║
-            // ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝        ╚═╝
+            // Part 1
             let (lstr, rstr) = (str_number[..str_len/2].to_string(), str_number[str_len/2..].to_string());
             if str_len % 2 == 0 {
                 if lstr == rstr {
@@ -45,12 +50,7 @@ fn main() {
                 }
             }
 
-            // ██████╗  █████╗ ██████╗ ████████╗    ██████╗
-            // ██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝    ╚════██╗
-            // ██████╔╝███████║██████╔╝   ██║        █████╔╝
-            // ██╔═══╝ ██╔══██║██╔══██╗   ██║       ██╔═══╝
-            // ██║     ██║  ██║██║  ██║   ██║       ███████╗
-            // ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝       ╚══════╝
+            // Part 2
             let mut divisors: Vec<usize> = Vec::new();
 
             // Check divisors for str_len
@@ -83,6 +83,27 @@ fn main() {
     let part1_sum = part1_collected_numbers.iter().sum::<usize>();
     let part2_sum = part2_collected_numbers.iter().sum::<usize>();
 
-    println!("#Part 1) Collected numbers sum: {}", part1_sum);
-    println!("#Part 2) Collected numbers sum: {}", part2_sum);
+    (part1_sum, part2_sum)
+}
+
+// ██████╗  █████╗ ██████╗ ████████╗    ██████╗
+// ██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝    ╚════██╗
+// ██████╔╝███████║██████╔╝   ██║        █████╔╝
+// ██╔═══╝ ██╔══██║██╔══██╗   ██║       ██╔═══╝
+// ██║     ██║  ██║██║  ██║   ██║       ███████╗
+// ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝       ╚══════╝
+fn part_2(input: &String) -> usize {
+    part_1(input).1
+}
+
+#[test]
+fn part1_sum_of_all_invalid_ids() {
+    let input = "11-22,95-115,998-1012,1188511880-1188511890,222220-222224,1698522-1698528,446443-446449,38593856-38593862,565653-565659,824824821-824824827,2121212118-2121212124".to_string();
+    assert_eq!(part_1(&input).0, 1227775554);
+}
+
+#[test]
+fn part2_sum_of_all_invalid_ids_using_new_rules() {
+    let input = "11-22,95-115,998-1012,1188511880-1188511890,222220-222224,1698522-1698528,446443-446449,38593856-38593862,565653-565659,824824821-824824827,2121212118-2121212124".to_string();
+    assert_eq!(part_2(&input), 4174379265);
 }

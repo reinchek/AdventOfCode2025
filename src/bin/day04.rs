@@ -10,64 +10,18 @@ fn main() {
     clrscr(Some(4));
 
     let input = read_input(4, None);
+    println!("#Part 1) How many rolls of paper can be accessed by a forklift? → {}", part_1(&input));
+    println!("#Part 2) How many rolls of paper in total can be removed by the Elves and their forklifts? {}", part_2(&input));
+}
 
-    // ██████╗  █████╗ ██████╗ ████████╗     ██╗
-    // ██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝    ███║
-    // ██████╔╝███████║██████╔╝   ██║       ╚██║
-    // ██╔═══╝ ██╔══██║██╔══██╗   ██║        ██║
-    // ██║     ██║  ██║██║  ██║   ██║        ██║
-    // ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝        ╚═╝
-    let mut accessible_rolls: usize = 0;
+fn build_map_matrix(input: &String) -> Vec<Vec<char>> {
     let mut map_matrix: Vec<Vec<char>> = Vec::new();
-    let mut cloned_map_matrix: Vec<Vec<char>> = Vec::new();
-
     for rolls_line in input.lines() {
         let rolls = rolls_line.chars().collect::<Vec<char>>();
         map_matrix.push(rolls);
     }
-    cloned_map_matrix = map_matrix.clone();
 
-    for (row_index, rolls_row) in map_matrix.clone().iter().enumerate() {
-        for (col_index, roll_col) in rolls_row.iter().enumerate() {
-            if *roll_col == ROLLS {
-                if !has_more_then_four_rolls_adjacents(&mut map_matrix, row_index, col_index) {
-                    cloned_map_matrix[row_index][col_index] = 'x';
-                    accessible_rolls+=1;
-                }
-            }
-        }
-    }
-
-    println!("#Part 1) How many rolls of paper can be accessed by a forklift? → {}", accessible_rolls);
-
-    // ██████╗  █████╗ ██████╗ ████████╗    ██████╗
-    // ██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝    ╚════██╗
-    // ██████╔╝███████║██████╔╝   ██║        █████╔╝
-    // ██╔═══╝ ██╔══██║██╔══██╗   ██║       ██╔═══╝
-    // ██║     ██║  ██║██║  ██║   ██║       ███████╗
-    // ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝       ╚══════╝
-    accessible_rolls = 0;
-    let mut some_roll_was_removed: bool = true;
-    let mut is_accessible: bool = true;
-
-    while some_roll_was_removed {
-        some_roll_was_removed = false;
-
-        for (row_index, rolls_row) in map_matrix.clone().iter().enumerate() {
-            for (col_index, roll_col) in rolls_row.iter().enumerate() {
-                if *roll_col == ROLLS {
-                    is_accessible = !has_more_then_four_rolls_adjacents(&mut map_matrix, row_index, col_index);
-                    some_roll_was_removed = some_roll_was_removed || is_accessible;
-                    if is_accessible {
-                        map_matrix[row_index][col_index] = 'x';
-                        accessible_rolls+=1;
-                    }
-                }
-            }
-        }
-    }
-
-    println!("#Part 2) How many rolls of paper in total can be removed by the Elves and their forklifts? {}", accessible_rolls);
+    map_matrix
 }
 
 fn render_matrix(matrix: &Vec<Vec<char>>) {
@@ -103,4 +57,93 @@ fn has_more_then_four_rolls_adjacents(matrix: &mut Vec<Vec<char>>, row: usize, c
 
 
     adjacents.iter().filter(|c| **c == ROLLS).count() >= 4
+}
+
+// ██████╗  █████╗ ██████╗ ████████╗     ██╗
+// ██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝    ███║
+// ██████╔╝███████║██████╔╝   ██║       ╚██║
+// ██╔═══╝ ██╔══██║██╔══██╗   ██║        ██║
+// ██║     ██║  ██║██║  ██║   ██║        ██║
+// ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝        ╚═╝
+fn part_1(input: &String) -> usize {
+    let mut accessible_rolls: usize = 0;
+    let mut map_matrix: Vec<Vec<char>> = build_map_matrix(&input);
+    let mut cloned_map_matrix: Vec<Vec<char>> = Vec::new();
+
+    cloned_map_matrix = map_matrix.clone();
+
+    for (row_index, rolls_row) in map_matrix.clone().iter().enumerate() {
+        for (col_index, roll_col) in rolls_row.iter().enumerate() {
+            if *roll_col == ROLLS {
+                if !has_more_then_four_rolls_adjacents(&mut map_matrix, row_index, col_index) {
+                    cloned_map_matrix[row_index][col_index] = 'x';
+                    accessible_rolls+=1;
+                }
+            }
+        }
+    }
+
+    accessible_rolls
+}
+
+// ██████╗  █████╗ ██████╗ ████████╗    ██████╗
+// ██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝    ╚════██╗
+// ██████╔╝███████║██████╔╝   ██║        █████╔╝
+// ██╔═══╝ ██╔══██║██╔══██╗   ██║       ██╔═══╝
+// ██║     ██║  ██║██║  ██║   ██║       ███████╗
+// ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝       ╚══════╝
+fn part_2(input: &String) -> usize {
+    let mut accessible_rolls = 0;
+    let mut some_roll_was_removed: bool = true;
+    let mut is_accessible: bool = true;
+    let mut map_matrix = build_map_matrix(&input);
+
+    while some_roll_was_removed {
+        some_roll_was_removed = false;
+
+        for (row_index, rolls_row) in map_matrix.clone().iter().enumerate() {
+            for (col_index, roll_col) in rolls_row.iter().enumerate() {
+                if *roll_col == ROLLS {
+                    is_accessible = !has_more_then_four_rolls_adjacents(&mut map_matrix, row_index, col_index);
+                    some_roll_was_removed = some_roll_was_removed || is_accessible;
+                    if is_accessible {
+                        map_matrix[row_index][col_index] = 'x';
+                        accessible_rolls+=1;
+                    }
+                }
+            }
+        }
+    }
+
+    accessible_rolls
+}
+
+#[test]
+fn part1_how_many_rolls_of_paper_can_be_accessed_by_a_forklift() {
+    let input = "..@@.@@@@.
+@@@.@.@.@@
+@@@@@.@.@@
+@.@@@@..@.
+@@.@@@@.@@
+.@@@@@@@.@
+.@.@.@.@@@
+@.@@@.@@@@
+.@@@@@@@@.
+@.@.@@@.@.".to_string();
+    assert_eq!(part_1(&input), 13);
+}
+
+#[test]
+fn part2_how_many_rolls_of_paper_can_be_accessed_by_a_forklift() {
+    let input = "..@@.@@@@.
+@@@.@.@.@@
+@@@@@.@.@@
+@.@@@@..@.
+@@.@@@@.@@
+.@@@@@@@.@
+.@.@.@.@@@
+@.@@@.@@@@
+.@@@@@@@@.
+@.@.@@@.@.".to_string();
+    assert_eq!(part_2(&input), 43);
 }

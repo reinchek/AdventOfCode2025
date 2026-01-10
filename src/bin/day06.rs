@@ -1,19 +1,39 @@
 // https://adventofcode.com/2025/day/6
 // Solve the problems on the math worksheet. What is the grand total found by adding together all of the answers to the individual problems?
 
-use std::arch::x86_64::_mulx_u32;
-use std::fs::{read_to_string, DirBuilder};
-use aoc2025::read_input;
+use aoc2025::{clrscr, read_input};
+
+enum Operations {
+    Add,
+    Mul
+}
+impl From<&str> for Operations {
+    fn from(value: &str) -> Self {
+        match value {
+            "*" => { Operations::Mul },
+            "+" => { Operations::Add },
+            _ => { Operations::Add }
+        }
+    }
+}
+
 
 fn main() {
+    clrscr(Some(6));
+
     let input = read_input(6, Some(false));
 
-    // ██████╗  █████╗ ██████╗ ████████╗     ██╗
-    // ██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝    ███║
-    // ██████╔╝███████║██████╔╝   ██║       ╚██║
-    // ██╔═══╝ ██╔══██║██╔══██╗   ██║        ██║
-    // ██║     ██║  ██║██║  ██║   ██║        ██║
-    // ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝        ╚═╝
+    println!("#Part 1) What is the grand total found by adding together all of the answers to the individual problems? {}", part_1(&input));
+    println!("#Part 2) What is the grand total found by adding together all of the answers to the individual problems? {}", part_2(&input));
+}
+
+// ██████╗  █████╗ ██████╗ ████████╗     ██╗
+// ██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝    ███║
+// ██████╔╝███████║██████╔╝   ██║       ╚██║
+// ██╔═══╝ ██╔══██║██╔══██╗   ██║        ██║
+// ██║     ██║  ██║██║  ██║   ██║        ██║
+// ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝        ╚═╝
+fn part_1(input: &String) -> i128 {
     let operations: Vec<char> = input
         .trim()
         .lines()
@@ -63,30 +83,17 @@ fn main() {
             _  => 0,
         };
     }
-    println!("#Part 1) What is the grand total found by adding together all of the answers to the individual problems? {grand_total}");
 
-    // ██████╗  █████╗ ██████╗ ████████╗    ██████╗
-    // ██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝    ╚════██╗
-    // ██████╔╝███████║██████╔╝   ██║        █████╔╝
-    // ██╔═══╝ ██╔══██║██╔══██╗   ██║       ██╔═══╝
-    // ██║     ██║  ██║██║  ██║   ██║       ███████╗
-    // ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝       ╚══════╝
+    grand_total
+}
 
-    enum Operations {
-        Add,
-        Mul
-    }
-    impl From<&str> for Operations {
-        fn from(value: &str) -> Self {
-            match value {
-                "*" => { Operations::Mul },
-                "+" => { Operations::Add },
-                _ => { Operations::Add }
-            }
-        }
-    }
-
-
+// ██████╗  █████╗ ██████╗ ████████╗    ██████╗
+// ██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝    ╚════██╗
+// ██████╔╝███████║██████╔╝   ██║        █████╔╝
+// ██╔═══╝ ██╔══██║██╔══██╗   ██║       ██╔═══╝
+// ██║     ██║  ██║██║  ██║   ██║       ███████╗
+// ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝       ╚══════╝
+fn part_2(input: &String) -> i128 {
     let mut last_signs_row = input.lines().last().unwrap();
     let signs_splitted_whitespaces = last_signs_row.split(['*', '+']);
     let signs_splitted = last_signs_row.split_inclusive(['*', '+']);
@@ -109,6 +116,9 @@ fn main() {
 
     for (sign_index, sign_str) in signs_splitted.map(|sign| sign.trim()).enumerate() {
         if sign_index == signs_splitted_array_whitespaces.len()-1 {
+            dbg!(&input_lines.last().unwrap().len());
+            dbg!(&input_lines.last().unwrap());
+            dbg!(last_signs_row.len());
             greatest_number_len = &input_lines.last().unwrap().len() - last_signs_row.len() + 1;
         } else {
             greatest_number_len = signs_splitted_array_whitespaces[sign_index].len();
@@ -152,6 +162,24 @@ fn main() {
         }
     }
 
-    println!("#Part 2) What is the grand total found by adding together all of the answers to the individual problems? {grand_total}");
+    grand_total
 }
 
+
+#[test]
+fn part1_whats_grand_total_found() {
+    let input = "123 328  51 64
+ 45 64  387 23
+  6 98  215 314
+*   +   *   +  ".to_string();
+    assert_eq!(part_1(&input), 4277556);
+}
+#[test]
+fn part2_whats_grand_total_found() {
+    let input = "
+123 328  51 64
+ 45 64  387 23
+  6 98  215 314
+*   +   *   +".to_string();
+    assert_eq!(part_2(&input), 3263827);
+}

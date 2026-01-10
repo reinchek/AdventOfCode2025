@@ -13,6 +13,18 @@ fn main () {
     clrscr(Some(1));
 
     let input = read_input(1, None);
+
+    println!("#Part 1) Zero count: {}", part_1(&input).0);
+    println!("#Part 2) How many times passed through 0 (zero) number: {}", part_2(&input));
+}
+
+// ██████╗  █████╗ ██████╗ ████████╗     ██╗
+// ██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝    ███║
+// ██████╔╝███████║██████╔╝   ██║       ╚██║
+// ██╔═══╝ ██╔══██║██╔══██╗   ██║        ██║
+// ██║     ██║  ██║██║  ██║   ██║        ██║
+// ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝        ╚═╝
+fn part_1(input: &String) -> (usize, u32) {
     let mut list = CircularLinkedList::new(LIST_LENGTH);
     let mut number = 0;
     let mut zero_count = 0;
@@ -35,6 +47,28 @@ fn main () {
         }
     }
 
-    println!("#Part 1) Zero count: {zero_count}");
-    println!("#Part 2) How many times passed through 0 (zero) number: {hits_zero_times}");
+    (zero_count, hits_zero_times)
+}
+
+// ██████╗  █████╗ ██████╗ ████████╗    ██████╗
+// ██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝    ╚════██╗
+// ██████╔╝███████║██████╔╝   ██║        █████╔╝
+// ██╔═══╝ ██╔══██║██╔══██╗   ██║       ██╔═══╝
+// ██║     ██║  ██║██║  ██║   ██║       ███████╗
+// ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝       ╚══════╝
+fn part_2(input: &String) -> u32 {
+    part_1(input).1
+}
+
+
+#[test]
+fn part1_test_zero_count() {
+    let input = "L68\nL30\nR48\nL5\nR60\nL55\nL1\nL99\nR14\nL82".to_string();
+    assert_eq!(part_1(&input).0, 3);
+}
+
+#[test]
+fn part2_how_many_times_passed_through_0() {
+    let input = "L68\nL30\nR48\nL5\nR60\nL55\nL1\nL99\nR14\nL82".to_string();
+    assert_eq!(part_2(&input), 6);
 }
