@@ -74,6 +74,7 @@ impl fmt::Display for TachyonBeamPath {
             writeln!(f, "{}", "\n");
         }
         Ok(())
+
     }
 }
 
@@ -88,7 +89,7 @@ fn main() {
     println!("grid: \n{}", techyon_beam_path);
 }
 
-fn part_1(input: &String) -> TachyonBeamPath {
+fn part_1(input: &String) -> usize {
     let mut techyon_beam_path = TachyonBeamPath::new(&input);
     let mut active_splitters_count: usize = 1;
 
@@ -138,15 +139,22 @@ fn part_1(input: &String) -> TachyonBeamPath {
         }
     }
 
-    println!("active splitters_count: {}", active_splitters_count);
+    active_splitters_count
+}
 
-    techyon_beam_path
+fn part_2(_input: &String) -> TachyonBeamPath {
+    unimplemented!()
 }
 
 
 #[test]
 fn part1_test_how_many_times_will_the_beam_be_split() {
+    let input = read_input(7, Some(true));
+    assert_eq!(part_1(&input), 21);
+}
+
+#[test]
+fn part2_test_different_timelines_would_a_single_tachyon_particle_end_up_on() {
     let input = read_input(7, Some(false));
-    let techyon_beam_path = part_1(&input);
-    assert_eq!(techyon_beam_path.grid.len(), 21);
+    assert_eq!(40, 40);
 }

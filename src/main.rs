@@ -20,7 +20,7 @@ fn main() {
         (true, true), // Day 4
         (true, true), // Day 5
         (true, true), // Day 6
-        (false, false), // Day 7
+        (true, false), // Day 7
         (false, false), // Day 8
         (false, false), // Day 9
         (false, false), // Day 10
