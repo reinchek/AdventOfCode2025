@@ -1,22 +1,24 @@
-use std::fmt;
 use aoc2025::{clrscr, read_input};
+use std::fmt;
+use std::fmt::Formatter;
 
 #[derive(Debug, Clone)]
 enum PointType {
     Empty,
     Ingress,
-    Splitter,
-    BeamPiece
+    Splitter(bool), // Holds the active state of the splitter, true = active, false = inactive.
+    BeamPiece,
 }
 
 impl From<char> for PointType {
     fn from(value: char) -> Self {
         match value {
             '.' => Self::Empty,
-            '^' => Self::Splitter,
+            '^' => Self::Splitter(false),
+            '°' => Self::Splitter(true),
             'S' => Self::Ingress,
             '|' => Self::BeamPiece,
-            _ => Self::Empty
+            _ => Self::Empty,
         }
     }
 }
@@ -25,9 +27,10 @@ impl Into<char> for PointType {
     fn into(self) -> char {
         match self {
             PointType::Empty => '.',
-            PointType::Splitter => '^',
+            PointType::Splitter(false) => '^',
+            PointType::Splitter(true) => '°',
             PointType::Ingress => 'S',
-            PointType::BeamPiece => '|'
+            PointType::BeamPiece => '|',
         }
     }
 }
@@ -51,8 +54,14 @@ impl TachyonBeamPath {
         }
 
         TachyonBeamPath {
-            grid: techyon_beam_vec
+            grid: techyon_beam_vec,
         }
+    }
+}
+
+impl fmt::Display for PointType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", <PointType as Into<char>>::into(self.clone()))
     }
 }
 
@@ -72,39 +81,72 @@ fn main() {
     clrscr(Some(7));
 
     let input = read_input(7, Some(true));
+    // let input = read_input(7, Some(false));
 
-    let techyon_beam_path = TachyonBeamPath::new(&input);
     let techyon_beam_path = part_1(&input);
 
-    println!("grid: {}", techyon_beam_path);
+    println!("grid: \n{}", techyon_beam_path);
 }
 
 fn part_1(input: &String) -> TachyonBeamPath {
     let mut techyon_beam_path = TachyonBeamPath::new(&input);
-    let mut current_position: (usize, usize) = (0, 0);
+    let mut active_splitters_count: usize = 1;
+
     for (row_idx, row) in techyon_beam_path.clone().grid.iter().enumerate() {
         for (col_idx, col) in row.iter().enumerate() {
             if match col {
-                PointType::Empty => false,
+                PointType::Empty => true,
                 PointType::Ingress => true,
                 PointType::BeamPiece => true,
-                PointType::Splitter => true
+                PointType::Splitter(_) => true,
             } {
-              if matches!(col, PointType::Splitter) {
-                  current_position = (row_idx, col_idx);
+                if matches!(col, PointType::Ingress) {
+                    // Showing the beam starting down from 'S' (Ingress) point.
+                    techyon_beam_path.grid[row_idx + 1][col_idx] = '|'.into();
+                } else if matches!(col, PointType::Splitter(_)) {
+                    // Showing the beams divided at the left and right on the same splitter row.
+                    techyon_beam_path.grid[row_idx][col_idx - 1] = '|'.into();
+                    techyon_beam_path.grid[row_idx][col_idx + 1] = '|'.into();
 
-                  // Showing the beam starting down from 'S' (Ingress) point.
-                  techyon_beam_path.grid[row_idx+1][col_idx] = '|'.into();
-              } else if matches!(col, PointType::Splitter) {
-                  current_position = (row_idx, col_idx);
+                    // Since we encounter a splitter, start with a loop to propagate the beam
+                    // vertically down all empty points.
+                    for left_right in [col_idx - 1, col_idx + 1].to_vec().iter() {
+                        let mut down_counter = 1;
 
-                  // Showing the beams divided on the left and on the right of next row.
-                  techyon_beam_path.grid[row_idx+1][col_idx-1] = '|'.into();
-                  techyon_beam_path.grid[row_idx+1][col_idx+1] = '|'.into();
-              }
+                        while
+                            (
+                                matches!(techyon_beam_path.grid[row_idx + down_counter][*left_right], PointType::Empty) ||
+                                matches!(techyon_beam_path.grid[row_idx + down_counter][*left_right], PointType::Splitter(_))
+                            ) &&
+                            row_idx + down_counter < techyon_beam_path.grid.len() - 1
+                        {
+                            if matches!(techyon_beam_path.grid[row_idx+down_counter][*left_right], PointType::Splitter(false)) {
+                                active_splitters_count += 1;
+                                techyon_beam_path.grid[row_idx+down_counter][*left_right] = '°'.into();
+                            } else if matches!(techyon_beam_path.grid[row_idx+down_counter][*left_right], PointType::Empty){
+                                // Showing the beams divided on the left and on the right of the next row.
+                                techyon_beam_path.grid[row_idx + down_counter][*left_right] = '|'.into();
+                                down_counter += 1;
+                            }
+                            else {
+                                break;
+                            }
+                        }
+                    }
+                }
             }
         }
     }
 
+    println!("active splitters_count: {}", active_splitters_count);
+
     techyon_beam_path
+}
+
+
+#[test]
+fn part1_test_how_many_times_will_the_beam_be_split() {
+    let input = read_input(7, Some(false));
+    let techyon_beam_path = part_1(&input);
+    assert_eq!(techyon_beam_path.grid.len(), 21);
 }
